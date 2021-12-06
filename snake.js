@@ -4,8 +4,10 @@ function snake(button){
 	}
 	var canvas = document.getElementById("canvas");
 	var ctx = canvas.getContext("2d");
-	oneclick = (oneclick+1)%2;
-	order = 3;
+	var scrsize = 300;
+	var oneclick = 1;
+	var speed = 1;
+	var order = 3;
 	var nbcube = 3;
 	var nbcase = 20;
 	var csize = scrsize/nbcase;
@@ -20,7 +22,7 @@ function snake(button){
 	var dir = 0;
 	function afficher(){
 		ctx.clearRect(0, 0, scrsize, scrsize);
-		ctx.fillStyle = "#ffffff";
+		ctx.fillStyle = "#000000";
 		ctx.fillRect(x*csize, y*csize, csize, csize);
 		for(var i = 1; i < nbcube; i++){
 			ctx.fillRect(posx[t-i]*csize, posy[t-i]*csize, csize, csize);
@@ -47,22 +49,25 @@ function snake(button){
 	}
 	reset();
 	function setArrow(){
-		if(array[39] == 1){
-			dir = 0;
-		}else
-		if(array[40] == 1){
-			dir = 1;
-		}else
-		if(array[37] == 1){
-			dir = 2;
-		}else
-		if(array[38] == 1){
-			dir = 3;
-		}
+		document.addEventListener('keydown', function(event) {
+    if(event.keyCode == 37) {
+       dir = 2;
+    }
+    else if(event.keyCode == 38) {
+        dir = 3;
+    }
+    else if(event.keyCode == 39) {
+        dir = 0;
+    }
+    else if(event.keyCode == 40) {
+        dir = 1;
+    }
+});
 		setTimeout(function(){setArrow()}, 1);
 	}
 	setArrow();
 	function play(){
+		console.log("wtf");
 		if (oneclick == 1 && order == 3) {
 			loose = false;
 			posx[t] = x;
@@ -76,16 +81,18 @@ function snake(button){
 					posRy = rand(nbcase);
 				}
 			}
+			console.log("x : ", x, ", y : ", y)
 			afficher();
 			for(var i = 1; i < nbcube; i++){
-				if(posx[t-i] == x && posy[t-i] == y || x >= nbcase || x < 0 || y >= nbcase || y < 0){
+				if(posx[t-i] == x && posy[t-i] == y ){
 					loose = true;
 					reset();
-					snake();
+					return;
 				}
 			}
 
 			if(dir == 0){
+
 				x += 1;
 			}
 			if(dir == 1){
@@ -97,8 +104,13 @@ function snake(button){
 			if(dir == 3){
 				y -= 1;
 			}
+			if (x >= nbcase) {x = 0}
+			if (x < 0) {x = nbcase-1}
+			if (y >= nbcase) {y = 0}
+			if (y < 0) {y = nbcase-1}
 			t++;
-			setTimeout(function(){play()}, 100);
+		speed += 0.0001;
+			setTimeout(function(){play()}, 100*speed);
 		}
 	}
 	play();
